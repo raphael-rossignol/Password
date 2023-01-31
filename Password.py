@@ -1,9 +1,10 @@
 from hashlib import sha256
+import json
 
 
 def user_input():
     valid_car_spe = "!@#$%^&*()_-+={}[]"
-    list_password = list(input("Choose a password, it must contain 1 Upper, 1 Low, 1 Digit, 1 Special Character and 8 minimum"))
+    list_password = list(input("Choose a password, it must contain 1 Upper, 1 Low, 1 Digit, 1 Special Character and 8 Character minimum"))
     password = str(list_password)
     size_password = len(list_password)
 
@@ -54,9 +55,12 @@ def user_input():
                 user_input()
 
         if any(car_spe in valid_car_spe for car_spe in list_password):      # Check if there's at least 1 Special Character
-            print("Here's your crypted password :")
-            print(sha256(password.encode('utf-8')).hexdigest())     # Hash the password and print the result
-            return print("Good Password !")       # If everything's valid, return Good Password
+            enc_password = (sha256(password.encode('utf-8')).hexdigest())     # Hash the password
+            with open("Password.json", "w") as f:
+                json.dump(enc_password, f)
+            json_enc_password = json.dumps(enc_password)
+            print("Here's your encrypted password :")
+            return print(json_enc_password)
         else:
             print("Car_spe not valid, try again")
             user_input()
