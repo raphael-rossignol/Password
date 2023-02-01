@@ -56,11 +56,19 @@ def user_input():
 
         if any(car_spe in valid_car_spe for car_spe in list_password):      # Check if there's at least 1 Special Character
             enc_password = (sha256(password.encode('utf-8')).hexdigest())     # Hash the password
-            with open("Password.json", "w") as f:
+
+            with open("Password.json", "a") as f:       #Open json file to write password and encrypted password
+                f.write("Password :")
+                json.dump(password, f)
+                f.write("\n")
+                f.write("Encrypted Password :")
                 json.dump(enc_password, f)
-            json_enc_password = json.dumps(enc_password)
+                f.write("\n")
+
+            json_enc_password = json.dumps(enc_password)        # Take the encrypted password's string from json file
             print("Here's your encrypted password :")
-            return print(json_enc_password)
+            return print(json_enc_password)     # Print the encrypted password's string from json file
+
         else:
             print("Car_spe not valid, try again")
             user_input()
