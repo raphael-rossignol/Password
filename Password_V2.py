@@ -8,13 +8,14 @@ valid_digit = "1234567890"
 password = ''
 list_password = ''
 password_checked = False
+enc_password = ''
 
 
 def user_input():
     global password
     global list_password
     list_password = list(input(
-        "Choose a password, it must contain 1 Upper, 1 Low, 1 Digit, 1 Special Character and 8 Character minimum"))
+        "Choose a password, it must contain 1 Upper, 1 Low, 1 Digit, 1 Special Character and 8 Character minimum : "))
     password = str(list_password)
 
 
@@ -23,6 +24,7 @@ user_input()
 
 def check_password():
     global password_checked
+    global password
     size_password = len(list_password)
     if size_password >= 7:
 
@@ -36,7 +38,7 @@ def check_password():
             password_checked = True
 
     else:
-        print("Length not valid, try again")
+        print("Password not valid, try again")
         user_input()
 
 
@@ -44,6 +46,7 @@ check_password()
 
 
 def encrypt_password():
+    global enc_password
     if password_checked == True:
         enc_password = (sha256(password.encode('utf-8')).hexdigest())
         print("Here's your encrypted password :")
@@ -53,3 +56,14 @@ def encrypt_password():
 encrypt_password()
 
 
+def password_json():
+    global enc_password
+    if password_checked == True:
+        password_dict = {
+            input("Choose a name for your password : "): enc_password
+        },
+        with open("Password.json", "a") as f:
+            json.dump(password_dict, f, indent=2)
+
+
+password_json()
