@@ -11,7 +11,7 @@ password_checked = False
 enc_password = ''
 
 
-def user_input():
+def user_input():       # Save the user input and transform it into list and string
     global password
     global list_password
     list_password = list(input(
@@ -22,7 +22,7 @@ def user_input():
 user_input()
 
 
-def check_password():
+def check_password():       # Use the length of the list and if it's valid proceed to analyse the string
     global password_checked
     global password
     size_password = len(list_password)
@@ -45,7 +45,7 @@ def check_password():
 check_password()
 
 
-def encrypt_password():
+def encrypt_password():     # If the password is valid it encrypts it and print the encrypted version
     global enc_password
     if password_checked == True:
         enc_password = (sha256(password.encode('utf-8')).hexdigest())
@@ -56,13 +56,13 @@ def encrypt_password():
 encrypt_password()
 
 
-def password_json():
+def password_json():        # If the password is valid, stores it in Json file and let you assign a name in it
     global enc_password
     if password_checked == True:
         password_dict = {
             input("Choose a name for your password : "): enc_password
         },
-        with open("Password.json", "a") as f:
+        with open("Password.json", "w") as f:
             json.dump(password_dict, f, indent=2)
 
 
