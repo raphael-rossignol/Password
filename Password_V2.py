@@ -8,10 +8,12 @@ valid_digit = "1234567890"
 password = ''
 list_password = ''
 password_checked = False
-enc_password = ''
+hashed_password = ''
+checking_data = False
+running = True      # While Running = True, executes all the functions except 'user_input'
 
 
-def user_input():       # Save the user input and transform it into list and string
+def user_input():       # Saves the user input and transform it into list and string
     global password
     global list_password
     list_password = list(input(
@@ -19,10 +21,7 @@ def user_input():       # Save the user input and transform it into list and str
     password = str(list_password)
 
 
-user_input()
-
-
-def check_password():       # Use the length of the list and if it's valid proceed to analyse the string
+def check_password():       # Uses the length of the list and if it's valid proceed to analyse the string
     global password_checked
     global password
     size_password = len(list_password)
@@ -42,18 +41,12 @@ def check_password():       # Use the length of the list and if it's valid proce
         user_input()
 
 
-check_password()
-
-
-def encrypt_password():     # If the password is valid it encrypts it and print the encrypted version
-    global enc_password
+def hash_password():     # If the password is valid it hashes it and print the hashed version
+    global hashed_password
     if password_checked == True:
-        enc_password = (sha256(password.encode('utf-8')).hexdigest())
-        print("Here's your encrypted password :")
-        return print(enc_password)
-
-
-encrypt_password()
+        hashed_password = (sha256(password.encode('utf-8')).hexdigest())
+        print("Here's your hashed password :")
+        print(hashed_password)
 
 
 def create_json():    # Asks the user if there is already a json file named "Password.json", if not creates it else pass
@@ -71,20 +64,36 @@ def create_json():    # Asks the user if there is already a json file named "Pas
                 json.dump(json_dict, f, indent=4)
 
 
-create_json()
+def checking_password_json():       # Verify if there's the same password in the json file
+    global hashed_password
+    global checking_data
+    with open('Password.json', 'r') as f:
+        check_data = json.load(f)
+    if hashed_password not in str(check_data):
+        checking_data = True
+    else:
+        print("This password is already taken, please choose another one")
 
 
-def password_json(filename='Password.json'):        # If the password is valid, stores it in Json file and let you assign a name in it
-    global enc_password
-    if password_checked == True:
+def password_json(filename='Password.json'): # If the password is valid, stores it in Json file and let you assign a name for it
+    if checking_data == True:
+        global hashed_password
+        global running
         password_dict = {
-            input("Choose a name for your password : "): enc_password
+            input("Choose a name for your password : "): hashed_password
         }
         with open(filename, "r+") as f:
             file_data = json.load(f)
             file_data["Password"].append(password_dict)
             f.seek(0)
             json.dump(file_data, f, indent=2)
+            running = False
 
 
-password_json()
+while running == True:
+    user_input()
+    check_password()
+    hash_password()
+    create_json()
+    checking_password_json()
+    password_json()
